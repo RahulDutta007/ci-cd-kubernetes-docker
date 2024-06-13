@@ -15,7 +15,14 @@ env:
 jobs:
     unit-testing:
         name: Unit Testing
-        runs-on: ubuntu-latest
+        strategy:
+          matrix:
+            node_version: [18, 19, 20]
+            operating_system: [ubuntu-latest, macos-latest]
+            exclude:
+              - node_version: 18
+                operating_system: macos-latest
+        runs-on: ${{ matrix.operating_system }}
         steps:
             - name: Checkout Repository
               uses: actions/checkout@v4
@@ -23,10 +30,50 @@ jobs:
             - name: Setup NodeJS version 18
               uses: actions/setup-node@v3
               with:
-                node-version: 18
+                node-version: ${{ matrix.node_version }}
             
             - name: Install Dependencies
               run: npm install
             
             - name: Unit Testing
+              id: node-unit-testing-step
               run: npm test
+
+            - name: Archive Test Results
+              if: steps.node-unit-testing-step.outcome == 'failure' || steps.node-unit-testing-step.outcome == 'success'
+              uses: actions/upload-artifact@v3
+              with: 
+                name: Mocha Test Results
+                path: test-results.xml
+    code-coverage:
+        name: Code Coverage
+        strategy:
+          matrix:
+            node_version: [18, 19, 20]
+            operating_system: [ubuntu-latest, macos-latest]
+            exclude:
+              - node_version: 18
+                operating_system: macos-latest
+        runs-on: ${{ matrix.operating_system }}
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v4
+            
+            - name: Setup NodeJS version 18
+              uses: actions/setup-node@v3
+              with:
+                node-version: ${{ matrix.node_version }}
+            
+            - name: Install Dependencies
+              run: npm install
+            
+            - name: Check Code Coverage
+              continue-on-error: true
+              run: npm run coverage
+
+            - name: Archive Test Results
+              uses: actions/upload-artifact@v3
+              with: 
+                name: Code Coverage
+                path: coverage
+                retention-days: 5
