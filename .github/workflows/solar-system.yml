@@ -114,3 +114,10 @@ jobs:
             -e MONGO_USERNAME=$MONGO_USERNAME \
             -e MONGO_PASSWORD=$MONGO_PASSWORD \
             ${{ vars.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
+
+        - name: Docker Push
+          uses: docker/build-push-action@v4
+          with:
+            context: .
+            push: true
+            tags: ${{ vars.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
