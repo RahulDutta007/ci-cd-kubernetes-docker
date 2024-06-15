@@ -64,24 +64,36 @@ jobs:
                 path: test-results.xml
     code-coverage:
         name: Code Coverage
-        strategy:
-          matrix:
-            # node_version: [18, 19, 20]
-            # operating_system: [ubuntu-latest, macos-latest]
-            node_version: [18]
-            operating_system: [ubuntu-latest]
-            # exclude:
-            #   - node_version: 18
-            #     operating_system: macos-latest
+        container: 
+          image: node:18
+        services:
+          mongo-db:
+            image: siddharth67/mongo-db:non-prod
+            options:
+              --name mongo
+        env:
+          MONGO_URI: 'mongodb://mongo:27017/superData'
+          MONGO_USERNAME: non-prod-username
+          MONGO_PASSWORD: non-prod-password
+
+        # strategy:
+        #   matrix:
+        #     # node_version: [18, 19, 20]
+        #     # operating_system: [ubuntu-latest, macos-latest]
+        #     node_version: [18]
+        #     operating_system: [ubuntu-latest]
+        #     # exclude:
+        #     #   - node_version: 18
+        #     #     operating_system: macos-latest
         runs-on: ${{ matrix.operating_system }}
         steps:
             - name: Checkout Repository
               uses: actions/checkout@v4
             
-            - name: Setup NodeJS version 18
-              uses: actions/setup-node@v3
-              with:
-                node-version: ${{ matrix.node_version }}
+            # - name: Setup NodeJS version 18
+            #   uses: actions/setup-node@v3
+            #   with:
+            #     node-version: ${{ matrix.node_version }}
             
             - name: Install Dependencies
               run: npm install
