@@ -124,7 +124,7 @@ jobs:
             push: false
             tags: ${{ vars.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
         
-        - name: Docker Test
+        # - name: Docker Test
           # run: |
           #   docker images
           #   docker run --name solar-system-app -d \
