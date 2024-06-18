@@ -163,3 +163,22 @@ jobs:
             tags: |
               ${{ vars.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
               ${{ github.repository_owner }}/solar-system:${{ github.sha }}
+    
+    dev-deploy:
+      needs: docker
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v4
+
+        - name: Setup Kubectl
+          uses: azure/setup-kubectl@v3
+          with:
+            version: 'v1.26.0'
+        
+        - name: Fetch Kubernetes Cluster Details
+          run: |
+            kubectl version --short
+            echo ------------------
+            kubectl get nodes
+         
