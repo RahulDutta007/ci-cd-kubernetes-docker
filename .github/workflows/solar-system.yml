@@ -180,6 +180,13 @@ jobs:
         
         - name: Update Kube Config
           run: aws eks update-kubeconfig --name demo-cluster --region ap-south-1
+
+        - name: Fetch Kubernetes Config
+          run: |
+            kubectl version --short
+            echo ------------------
+            kubectl get nodes
+
         # - name: Setup Kubectl
         #   uses: azure/setup-kubectl@v3
         #   with:
