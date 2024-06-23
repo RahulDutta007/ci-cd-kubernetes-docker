@@ -183,7 +183,7 @@ jobs:
 
         - name: Fetch Kubernetes Config
           run: |
-            kubectl version --short
+            kubectl version
             echo ------------------
             kubectl get nodes
 
