@@ -186,6 +186,23 @@ jobs:
             kubectl version
             echo ------------------
             kubectl get nodes
+        
+        - name: Replace tokens in Manifest files
+          uses: cschleiden/replace-tokens@v1
+          with:
+            tokenPrefix: "_{_"
+            tokenSuffix: "_}_"
+            files: '["kubernetes/*.yaml"]'
+          env:
+            NAMESPACE: ${{ vars.NAMESPACE }}
+            REPLICAS: ${{ vars.REPLICAS }}
+            IMAGE: ${{ vars.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
+            
+        - name: Check Manifest Files
+          run: ls kubernetes/
+
+        - name: Dev Deploy to EKS
+          run: kubectl apply -f kubernetes/
 
         # - name: Setup Kubectl
         #   uses: azure/setup-kubectl@v3
